@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\ResponseFormatter;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
@@ -36,7 +37,9 @@ class ProfileController extends Controller
             $data['avatar'] = $path;
         }
 
-        $data_update = $user->update($data);
+        $user->update($data);
+
+        $data_update = User::find($user->id);
 
         return ResponseFormatter::success($data_update, 'Profile updated successfully');
     }
