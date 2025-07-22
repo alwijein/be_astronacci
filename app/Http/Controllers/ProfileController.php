@@ -27,9 +27,7 @@ class ProfileController extends Controller
 
         $data = $request->only('name', 'email', 'phone');
 
-        // Handle avatar upload
         if ($request->hasFile('avatar')) {
-            // Hapus avatar lama jika ada
             if ($user->avatar) {
                 Storage::delete('public/' . $user->avatar);
             }
