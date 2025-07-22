@@ -11,12 +11,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $perPage = $request->input('per_page', 10);
+        $page = $request->input('page', 1);
 
         $users = User::when($search, function ($query, $search) {
             return $query->where('name', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%");
         })
-            ->paginate(10);
+            ->paginate($perPage, ['*'], 'page', $page);
 
         return ResponseFormatter::success($users, 'Users fetched successfully');
     }
