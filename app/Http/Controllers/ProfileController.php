@@ -37,8 +37,12 @@ class ProfileController extends Controller
             $data['avatar'] = $path;
         }
 
-        $user->update($data);
-
+        $user->update([
+            'name' => $data['name'] ?? $user->name,
+            'email' => $data['email'] ?? $user->email,
+            'phone' => $data['phone'] ?? $user->phone,
+            'avatar' => $data['avatar'] ?? $user->avatar,
+        ]);
         $data_update = User::find($user->id);
 
         return ResponseFormatter::success($data_update, 'Profile updated successfully');
