@@ -52,6 +52,6 @@ class User extends Authenticatable
     {
         return $this->avatar
             ? asset('storage/' . $this->avatar)
-            : asset('storage/default_avatar.png'); // Path ke gambar default
+            : asset('public/default_avatar.png'); // Path ke gambar default
     }
 }
