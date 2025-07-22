@@ -6,9 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,61 +21,54 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationLabel = 'Users';
-    protected static ?int $navigationSort = 1;
-
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Card::make()
-                    ->columns(2)
-                    ->schema([
-                        FileUpload::make('avatar')
-                            ->label('Profile Photo')
-                            ->image()
-                            ->avatar()
-                            ->columnSpan(2)
-                            ->alignCenter()
-                            ->directory('avatars')
-                            ->disk('public') // Gunakan disk 'public' untuk menyimpan gambar
-                            ->preserveFilenames()
-                            ->maxSize(1024) // Maksimal ukuran file 1MB
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                            ->helperText('Upload a profile photo. Recommended size: 300x300px.')
-                            ->nullable(),
+                FileUpload::make('avatar_url')
+                    ->label('Gambar Profile')
+                    ->directory('avatars')
+                    ->image()
+                    ->imageEditor()
+                    ->columnSpanFull()
+                    ->maxSize(1024 * 32),
 
-                        TextInput::make('name')
-                            ->label('Full Name')
-                            ->required()
-                            ->autofocus()
-                            ->maxLength(255),
+                Forms\Components\TextInput::make('name')
+                    ->label('Nama')
+                    ->required()
+                    ->maxLength(255),
 
-                        TextInput::make('email')
-                            ->label('Email Address')
-                            ->email()
-                            ->required()
-                            ->unique(User::class, 'email', ignoreRecord: true),
+                Forms\Components\TextInput::make('email')
+                    ->label('Alamat Email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
 
-                        TextInput::make('phone')
-                            ->label('Phone Number')
-                            ->tel()
-                            ->required(),
+                Forms\Components\TextInput::make('phone')
+                    ->label('Nomor Telepon')
+                    ->tel()
+                    ->prefix('+62')
+                    ->maxLength(255),
 
-                        TextInput::make('password')
-                            ->label('Password')
-                            ->password()
-                            ->required(fn(?User $record) => ! $record)
-                            ->minLength(8)
-                            ->same('passwordConfirmation'),
 
-                        TextInput::make('passwordConfirmation')
-                            ->label('Confirm Password')
-                            ->password()
-                            ->required(fn(?User $record) => ! $record),
-                    ]),
+                Forms\Components\TextInput::make('password')
+                    ->label('Kata Sandi')
+                    ->password()
+                    ->required(function ($record) {
+                        return !$record;
+                    })
+                    ->confirmed()
+                    ->revealable()
+                    ->minLength(6)
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label('Konfirmasi Kata Sandi')
+                    ->password()
+                    ->revealable()
+                    ->maxLength(255),
             ]);
     }
 
@@ -126,19 +117,11 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ManageUsers::route('/'),
         ];
     }
 }
