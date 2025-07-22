@@ -36,8 +36,8 @@ class ProfileController extends Controller
             $data['avatar'] = $path;
         }
 
-        $user->update($data);
+        $data_update = $user->update($data);
 
-        return ResponseFormatter::success($user, 'Profile updated successfully');
+        return ResponseFormatter::success($data_update, 'Profile updated successfully');
     }
 }
