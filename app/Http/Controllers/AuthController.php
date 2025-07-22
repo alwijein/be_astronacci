@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -70,12 +71,13 @@ class AuthController extends Controller
             return ResponseFormatter::error(null, 'User not found', 404);
         }
 
-        // Generate reset token (contoh sederhana)
         $resetToken = Str::random(60);
-        $user->update(['reset_token' => $resetToken]);
+        $user->update(['password' => Hash::make($resetToken)]);
 
-        // Di sini Anda bisa mengirim email dengan reset token
-        // Mail::to($user->email)->send(new PasswordResetMail($resetToken));
+        Mail::raw('Your password reset this is a new password: ' . $resetToken, function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Password Reset');
+        });
 
         return ResponseFormatter::success(null, 'Reset password link has been sent');
     }
