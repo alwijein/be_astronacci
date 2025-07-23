@@ -73,7 +73,7 @@ class AuthController extends Controller
             return ResponseFormatter::error(null, 'User not found', 404);
         }
 
-        $resetToken = Str::random(60);
+        $resetToken = Str::random(8);
         $user->update(['password' => Hash::make($resetToken)]);
 
         Mail::raw('Your password reset this is a new password: ' . $resetToken, function ($message) use ($user) {
